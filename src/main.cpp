@@ -20,8 +20,10 @@ void main() {
 
     Serial<serialUsart>::init(CpuFreq, 9600, &stdout, &stdin);
 
-    Hello<Nbavr> hello(stdout);
-    Display<Nbavr> display(stdin);
+    uint8_t m[8] = {};
+
+    Hello<Nbavr> hello(stdout, stdin, m);
+    Display<Nbavr> display(m);
 
     Task<Nbavr>* tasks[] = {&hello, &display};
 
