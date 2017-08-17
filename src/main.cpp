@@ -13,20 +13,21 @@ void main() {
     typedef TimerCounter1 systemTimer;
     // typedef Usart0 serialUsart;
 
-    typedef Nbavr<systemTimer, CpuFreq> Nbavr;
+    typedef Clock<systemTimer, CpuFreq> Clock;
 
     // StreamBuffer<char, 40> stdout;
     // StreamBuffer<char, 40> stdin;
     //
     // Serial<serialUsart>::init(CpuFreq, 9600, &stdout, &stdin);
+    Clock::init();
 
     uint8_t m[8] = {};
 
-    // Hello<Nbavr> hello(stdout, stdin, m);
-    Rain<Nbavr> rain(m);
-    Display<Nbavr> display(m);
+    // Hello<Clock> hello(stdout, stdin, m);
+    Rain<Clock> rain(m);
+    Display<Clock> display(m);
 
-    Task<Nbavr>* tasks[] = {&rain, &display};
+    Task<Clock>* tasks[] = {&rain, &display};
 
-    Nbavr::run(tasks);
+    TaskManager<Clock> tm(tasks);
 }

@@ -3,8 +3,8 @@
 
 #include <nbavr.hpp>
 
-template <class Nbavr>
-struct Hello : Task<Nbavr> {
+template <class Clock>
+struct Hello : Task<Clock> {
     Stream<char>& stdout;
     Stream<char>& stdin;
     uint8_t (&m)[8];
@@ -19,7 +19,7 @@ struct Hello : Task<Nbavr> {
             setChar(c);
         }
 
-        this->sleep(Nbavr::millisToTicks(20));
+        this->sleep(Clock::millisToTicks(20));
     }
 
     void setChar(char c) {

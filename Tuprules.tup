@@ -6,6 +6,7 @@ PROJECT_TOP = $(TUP_CWD)
 
 CC = avr-g++
 OBJDUMP = avr-objdump
+OBJCOPY = avr-objcopy
 
 MMCU = $(mcu)
 FREQ = $(freq)

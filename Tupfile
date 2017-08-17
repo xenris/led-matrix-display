@@ -8,5 +8,8 @@ include_rules
 # Compile object code to elf.
 : tmp/*.o |> $(CC) $(CFLAGS) -o %o %f |> gen/firmware.elf
 
+# Copy to hex.
+: gen/firmware.elf |> $(OBJCOPY) -O ihex %f %o |> gen/firmware.hex
+
 # Decompile elf to asm, for debugging.
 : gen/firmware.elf |> $(OBJDUMP) -S --architecture=avr --disassemble %f > %o |> gen/firmware.asm
