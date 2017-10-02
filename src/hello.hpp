@@ -3,19 +3,19 @@
 
 #include <nbavr.hpp>
 
-template <class Clock>
-struct Hello : Task<Clock> {
-    Stream<char>& stdout;
-    Stream<char>& stdin;
+template <class Clock, class cout_t, class cin_t>
+struct Hello : nbavr::Task<Clock> {
+    cout_t& cout;
+    cin_t& cin;
     uint8_t (&m)[8];
 
-    Hello(Stream<char>& stdout, Stream<char>& stdin, uint8_t (&m)[8]) : stdout(stdout), stdin(stdin), m(m) {
+    Hello(cout_t& cout, cin_t& cin, uint8_t (&m)[8]) : cout(cout), cin(cin), m(m) {
     }
 
     void loop() override {
         char c;
 
-        if(stdin.pop(&c)) {
+        if(cin.pop(&c)) {
             setChar(c);
         }
 

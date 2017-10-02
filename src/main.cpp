@@ -4,30 +4,31 @@ INCLUDE_DEFAULT_CALLBACK();
 INCLUDE_TIMERCOUNTER_OUTPUT_CALLBACK(1, A);
 INCLUDE_TIMERCOUNTER_OUTPUT_CALLBACK(1, B);
 INCLUDE_TIMERCOUNTER_OVERFLOW_CALLBACK(1);
-// INCLUDE_USART_CALLBACK(0, RX);
-// INCLUDE_USART_CALLBACK(0, DE);
+INCLUDE_USART_CALLBACK(0, RX);
+INCLUDE_USART_CALLBACK(0, DE);
 
 void main() {
     const uint32_t CpuFreq = 16000000;
 
-    typedef TimerCounter1 systemTimer;
-    // typedef Usart0 serialUsart;
+    using SystemTimer = nbavr::hw::TimerCounter1;
+    // using SerialUsart = nbavr::hw::Usart0;
+    // using cout_t = nbavr::Queue<char, 40>;
+    // using cin_t = nbavr::Queue<char, 40>;
 
-    typedef Clock<systemTimer, CpuFreq> Clock;
+    using Clock = nbavr::Clock<SystemTimer, CpuFreq, 0>;
 
-    // StreamBuffer<char, 40> stdout;
-    // StreamBuffer<char, 40> stdin;
-    //
-    // Serial<serialUsart>::init(CpuFreq, 9600, &stdout, &stdin);
-    Clock::init();
+    // static cout_t cout;
+    // static cin_t cin;
+
+    // nbavr::Serial<SerialUsart, cout_t, cin_t>::init(CpuFreq, 115200, &cout, &cin);
 
     uint8_t m[8] = {};
 
-    // Hello<Clock> hello(stdout, stdin, m);
-    Rain<Clock> rain(m);
-    Display<Clock> display(m);
+    // static Hello<Clock, cout_t, cin_t> hello(cout, cin, m);
+    static Rain<Clock> rain(m);
+    static Display<Clock> display(m);
 
-    Task<Clock>* tasks[] = {&rain, &display};
+    static nbavr::Task<Clock>* tasks[] = {&rain, &display};
 
-    TaskManager<Clock> tm(tasks);
+    static nbavr::TaskManager<Clock> tm(tasks);
 }

@@ -2,7 +2,6 @@
 #define RAIN_HPP
 
 #include <nbavr.hpp>
-#include <stdlib.h>
 
 struct Drop {
     enum class State : int8_t {
@@ -18,33 +17,34 @@ struct Drop {
     const float acc = 9.8 * 2;
 };
 
-template <class Nbavr>
-struct Rain : Task<Nbavr> {
+template <class Clock>
+struct Rain : nbavr::Task<Clock> {
     uint8_t (&m)[8];
     Drop mDrops[8] = {};
+    nbavr::Random rand;
 
     Rain(uint8_t (&m)[8]) : m(m) {
     }
 
     void loop() override {
         for(int8_t i = 0; i < 8; i++) {
-            if((rand() % 100) < 1) {
+            if((rand.next<int16_t>() % 100) < 1) {
                 if(mDrops[i].state == Drop::State::Blank) {
                     mDrops[i].state = Drop::State::Top;
                 } else if(mDrops[i].state == Drop::State::Top) {
                     mDrops[i].state = Drop::State::Fall;
-                    mDrops[i].startTime = Nbavr::getTicks();
+                    mDrops[i].startTime = Clock::getTicks();
                 }
             }
         }
 
-        uint32_t now = Nbavr::getTicks();
+        uint32_t now = Clock::getTicks();
 
         for(int8_t i = 0; i < 8; i++) {
             Drop& drop = mDrops[i];
 
             if(drop.state == Drop::State::Fall) {
-                float dTime = float(now - drop.startTime) / Nbavr::millisToTicks(1000);
+                float dTime = float(now - drop.startTime) / Clock::millisToTicks(1000);
 
                 drop.pos = drop.acc * dTime * dTime;
 
@@ -66,14 +66,14 @@ struct Rain : Task<Nbavr> {
                 uint8_t row = drop.pos;
 
                 if(row < 8) {
-                    m[row] |= bv(i);
+                    m[row] |= nbavr::bv(i);
                 }
             } else if(drop.state == Drop::State::Top) {
-                m[0] |= bv(i);
+                m[0] |= nbavr::bv(i);
             }
         }
 
-        this->sleep(Nbavr::millisToTicks(40));
+        this->sleep(Clock::millisToTicks(40));
     }
 };
 
